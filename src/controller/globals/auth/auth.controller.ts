@@ -62,9 +62,39 @@ class AuthController {
 
   //login
   static async loginUser(req : Request , res : Response){
-    const {username , password} = req.body
-    const 
+    const {email , password} = req.body
+    //checking whether user entered email and password 
+    if(!email || !password){
+      res.status(400).json({
+        message : "Please provide the required credentials"
+      })
+      return
+    }
 
+    //checking whether the email exists or not 
+    const data = await User.findAll({ // kunai pani table bata tannai data nikalda array ma aauxa tara kunai euta matra data xa bhani object ma aauxa 
+      where : {
+        email
+      }
+    })
+    
+    if (data.length == 0){
+      res.status(404).json({
+        error : "There is no user of particular email"
+      })
+    }
+    else{
+      //comparesync(plain password : user ley halney , hash password : db ma store bhako )
+      const isPasswordMatch = bcrypt.compareSync(password , data[0].password)
+      if(isPasswordMatch){
+        
+      }
+      else {
+        res.status(403).json({
+          error : "Invalid email or password "
+        })
+      }
+    }
   }
 }
 
