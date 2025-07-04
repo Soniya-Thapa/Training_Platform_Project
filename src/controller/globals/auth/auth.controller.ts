@@ -1,5 +1,6 @@
-import {Request,Response} from "express"
+import { Request, Response } from "express"
 import User from "../../../database/models/user.model"
+import bcrypt from "bcrypt"
 
 // const registerUser = async (req : Request,res : Response)=>{
 //   // const username = req.body.username
@@ -29,22 +30,41 @@ import User from "../../../database/models/user.model"
 
 class AuthController {
   //static garexi class lai direct export garexi tyeha bhitra ko method nih export hunxa
-  static async registerUser(req : Request,res : Response){
-    const {username, password,email} = req.body
-  if(!username || !password || !email){
-     res.status(400).json({
-      error : "Please provide username, password, email"
-    })
-  }
-  else{
+  static async registerUser(req: Request, res: Response) {
+    // console.log(req.body)
+
+    if (req.body == undefined) {
+      res.status(400).json({
+        error: "No data was sent"
+      })
+      return
+    }
+    const { username, password, email } = req.body
+
+    if (!username || !password || !email) {
+      res.status(400).json({
+        error: "Please provide username, password, email"
+      })
+      return
+    }
+
     //insert into user table 
     await User.create({
-      username, password,email
+      username, 
+      password : bcrypt.hashSync(password , 12), //12  : salt value which determines the strength of password (security) and is indirectly proportional to user experience and directly proportional to time required
+      email
+    })
+    //registration ko case ma status code 201 hunxa 
+    res.status(201).json({
+      message: "User registered successfully"
     })
   }
-  res.status(200).json({
-    message : "user registered successfully"
-  })
+
+  //login
+  static async loginUser(req : Request , res : Response){
+    const {username , password} = req.body
+    const 
+
   }
 }
 
