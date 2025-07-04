@@ -6,7 +6,7 @@ import {Table,Column,Model,DataType, PrimaryKey,} from "sequelize-typescript"
 })
 
 //class user sanga matra column banauney capacity hunna so we need to extend from model
-class user extends Model{
+class User extends Model{
   @Column({  //UUID ley hamro user ko id direct serially 1,2,3,4,... narakhera random kehi unpredictable rakhdinxa for security
     primaryKey : true,
     type : DataType.UUID,
@@ -33,4 +33,4 @@ class user extends Model{
   declare role : string
 }
 
-export default user
+export default User
