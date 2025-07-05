@@ -1,4 +1,6 @@
 import {Sequelize} from "sequelize-typescript"
+import {config} from "dotenv" //config is function given by dotenv
+config()
 
 const sequelize = new Sequelize({
   database : process.env.DB_DATABASE, 
