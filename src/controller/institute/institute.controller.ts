@@ -1,23 +1,28 @@
-import { Request, Response } from "express";
+import { NextFunction, Request, Response } from "express";
 import sequelize from "../../database/connection";
 import generateInstituteNumber from "../../services/random.institute.number";
-import { AutoIncrement } from "sequelize-typescript";
 
-class InstituteController {
-  static async createInstitute(req: Request, res: Response) {
-    const { instituteName, instituteEmail, institutePhoneNumber, instituteAddress } = req.body
-    const instituteVatNo = req.body.instituteVatNo || null
-    const institutePanNo = req.body.institutePanNo || null
+interface IExtendedRequest extends Request{
+  user ?:{
+    name : string
+  }
+}
 
-    if (!instituteName || !instituteEmail || !institutePhoneNumber || !instituteAddress) {
-      res.status(400).json({
-        message: "Please provide instituteName, instituteEmail, institutePhoneNumber, instituteAddress"
-      })
-      return
-    }
-    const instituteNumber = generateInstituteNumber()
-    //else ma institute create garna paryo 
-    await sequelize.query(`
+const createInstitute = async (req: IExtendedRequest, res: Response, next: NextFunction) => {
+  console.log(req.user,"name from middleware")
+  const { instituteName, instituteEmail, institutePhoneNumber, instituteAddress } = req.body
+  const instituteVatNo = req.body.instituteVatNo || null
+  const institutePanNo = req.body.institutePanNo || null
+
+  if (!instituteName || !instituteEmail || !institutePhoneNumber || !instituteAddress) {
+    res.status(400).json({
+      message: "Please provide instituteName, instituteEmail, institutePhoneNumber, instituteAddress"
+    })
+    return
+  }
+  const instituteNumber = generateInstituteNumber()
+  //else ma institute create garna paryo 
+  await sequelize.query(`
       CREATE TABLE IF NOT EXISTS institute_${instituteNumber}(
       id INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
       instituteName VARCHAR(255) NOT NULL,
@@ -30,25 +35,27 @@ class InstituteController {
       updatedAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
     )
   `)
-    await sequelize.query(`
+  await sequelize.query(`
     INSERT INTO institute_${instituteNumber} (instituteName, instituteEmail, institutePhoneNumber, instituteAddress , institutePanNo ,instituteVatNo) VALUES (?,?,?,?,?,?)`, {
-      replacements: [instituteName, instituteEmail, institutePhoneNumber, instituteAddress, institutePanNo, instituteVatNo]
-    })
-    res.status(200).json({
-      message: "Institute Created"
-    })
-  }
+    replacements: [instituteName, instituteEmail, institutePhoneNumber, instituteAddress, institutePanNo, instituteVatNo]
+  })
+  res.status(200).json({
+    message: "Institute Created"
+  })
+  next()
 }
-  const createTeacherTable = async (req: Request, res: Response) => {
-    // await sequelize.query(`
-    //   CREATE TABLE teacher_${instituteNumber}(
-    //   id INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
-    //   teacherName VARCHAR(255),
-    //   teacherEmail VARCHAR(255),
-    //   teacherPhoneNumber VARCHAR(255)
-    //   )`)
-
-  }
 
 
-export default InstituteController
+const createTeacherTable = async (req: Request, res: Response) => {
+  // await sequelize.query(`
+  //   CREATE TABLE teacher_${instituteNumber}(
+  //   id INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
+  //   teacherName VARCHAR(255),
+  //   teacherEmail VARCHAR(255),
+  //   teacherPhoneNumber VARCHAR(255)
+  //   )`)
+
+}
+
+
+export { createInstitute }
