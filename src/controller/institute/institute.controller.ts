@@ -1,16 +1,17 @@
 import { Request, Response } from "express";
 import sequelize from "../../database/connection";
 import generateInstituteNumber from "../../services/random.institute.number";
+import { AutoIncrement } from "sequelize-typescript";
 
-class InstituteController{
-  static async createInstitute(req : Request, res : Response){
-    const {instituteName, instituteEmail, institutePhoneNumber, instituteAddress} = req.body
-    const instituteVatNo = req.body.instituteVatNo || null  
+class InstituteController {
+  static async createInstitute(req: Request, res: Response) {
+    const { instituteName, instituteEmail, institutePhoneNumber, instituteAddress } = req.body
+    const instituteVatNo = req.body.instituteVatNo || null
     const institutePanNo = req.body.institutePanNo || null
 
-    if(!instituteName || !instituteEmail || !institutePhoneNumber || !instituteAddress){
+    if (!instituteName || !instituteEmail || !institutePhoneNumber || !instituteAddress) {
       res.status(400).json({
-        message : "Please provide instituteName, instituteEmail, institutePhoneNumber, instituteAddress"
+        message: "Please provide instituteName, instituteEmail, institutePhoneNumber, instituteAddress"
       })
       return
     }
@@ -29,14 +30,25 @@ class InstituteController{
       updatedAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
     )
   `)
-  await sequelize.query(`
-    INSERT INTO institute_${instituteNumber} (instituteName, instituteEmail, institutePhoneNumber, instituteAddress , institutePanNo ,instituteVatNo) VALUES (?,?,?,?,?,?)` , {
-      replacements : [instituteName, instituteEmail, institutePhoneNumber, instituteAddress , institutePanNo ,instituteVatNo]
+    await sequelize.query(`
+    INSERT INTO institute_${instituteNumber} (instituteName, instituteEmail, institutePhoneNumber, instituteAddress , institutePanNo ,instituteVatNo) VALUES (?,?,?,?,?,?)`, {
+      replacements: [instituteName, instituteEmail, institutePhoneNumber, instituteAddress, institutePanNo, instituteVatNo]
     })
-  res.status(200).json({
-    message : "Institute Created"
-  })
+    res.status(200).json({
+      message: "Institute Created"
+    })
   }
 }
+  const createTeacherTable = async (req: Request, res: Response) => {
+    // await sequelize.query(`
+    //   CREATE TABLE teacher_${instituteNumber}(
+    //   id INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
+    //   teacherName VARCHAR(255),
+    //   teacherEmail VARCHAR(255),
+    //   teacherPhoneNumber VARCHAR(255)
+    //   )`)
+
+  }
+
 
 export default InstituteController
