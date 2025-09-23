@@ -4,14 +4,17 @@ import bcrypt from "bcrypt"
 import jwt from "jsonwebtoken"
 
 // const registerUser = async (req : Request,res : Response)=>{
+
 //   // const username = req.body.username
 //   //   const password = req.body.password
 //   //   const email = req.body.email
+
 //   const {username, password,email} = req.body
 //   if(!username || !password || !email){
-//     return res.status(400).json({
+//      res.status(400).json({
 //       error : "Please provide username, password, email"
 //     })
+//    return
 //   }
 //   else{
 //     //insert into user table 
@@ -24,16 +27,14 @@ import jwt from "jsonwebtoken"
 //   })
 // }
 
-
-//yedi hami function lai bahira lekhxam tyo function tara class bhitra xa bhani tyo method.
+//yedi hami function lai bahira lekhxam bhani tyo function ho tara class bhitra xa bhani tyo method ho.
 // same bahira xa bhani variable ra class bhitra xa bhani tyo attribute / properties
 //hamro backend ma json data sandhai : req.body ma aauxa ra files,vedio,audio,image chahi : req.files
 
 class AuthController {
-  //static garexi class lai direct export garexi tyeha bhitra ko method nih export hunxa
+  //static garexi class lai direct export garexi tyeha bhitra ko method nih export hunxa ani class ko object pani create garirakhna pardaina 
   static async registerUser(req: Request, res: Response) {
     // console.log(req.body)
-
     if (req.body == undefined) {
       res.status(400).json({
         error: "No data was sent"
