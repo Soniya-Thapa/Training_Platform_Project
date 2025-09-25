@@ -55,6 +55,7 @@ class AuthController {
     await User.create({
       username, 
       password : bcrypt.hashSync(password , 12), 
+      //blowfish algorithm is used here
       //12  : salt value which determines the strength of password (security) and is indirectly proportional to user experience and directly proportional to time required
       //if hashsync xa then it is synchronous but if we want to perform asynchronous hashing then we use : async bcrypt.hash(password, 12) ra hash ko value harek time beglai beglai hunxa 
       email
@@ -99,7 +100,7 @@ class AuthController {
       const isPasswordMatch = bcrypt.compareSync(password , data[0].password)
       if(isPasswordMatch){
         //token generate garney jwt.sign(k lai lukauney,secret key, expiry date)
-        const token = jwt.sign({id :data[0].id}, "thisissecretkey" , {expiresIn : "30d"})
+        const token = jwt.sign({id :data[0].id}, "thisissecretkey" , {expiresIn : "30d"}) //HS256 algorithm is used here
         res.status(200).json({
           token,
           message : "logged in "
