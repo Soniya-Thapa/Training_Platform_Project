@@ -53,8 +53,8 @@ class AuthController {
 
     //insert into user table 
     await User.create({
-      username, 
-      password : bcrypt.hashSync(password , 12), 
+      username,
+      password: bcrypt.hashSync(password, 12),
       //blowfish algorithm is used here
       //12  : salt value which determines the strength of password (security) and is indirectly proportional to user experience and directly proportional to time required
       //if hashsync xa then it is synchronous but if we want to perform asynchronous hashing then we use : async bcrypt.hash(password, 12) ra hash ko value harek time beglai beglai hunxa 
@@ -67,48 +67,48 @@ class AuthController {
   }
 
   //login
-  static async loginUser(req : Request , res : Response){
-    const {email , password} = req.body
+  static async loginUser(req: Request, res: Response) {
+    const { email, password } = req.body
     //checking whether user entered email and password 
-    if(!email || !password){
+    if (!email || !password) {
       res.status(400).json({
-        message : "Please provide the required credentials"
+        message: "Please provide the required credentials"
       })
       return
     }
 
     //checking whether the email exists or not in user table
-    const data = await User.findAll({ 
+    const data = await User.findAll({
       // kunai pani table bata tannai data nikalda array ma aauxa tara kunai euta matra data xa bhani object ma aauxa 
-      where : {
+      where: {
         email
       }
     })
     // array ma data xa ki xaina bhanera check garna we should always use length.
-    if (data.length == 0){
+    if (data.length == 0) {
       res.status(404).json({
-        error : "There is no user of particular email"
+        error: "There is no user of particular email"
       })
     }
-    else{
+    else {
       //comparesync(plain password : user ley halney , hash password : db ma store bhako )
       //why we are doing data[0] ?????
       //Because the value stored inside data is an array, so you must access the first element:
       // data[0].id
       // data[0].password
       // If you try data.id or data.password, it will be undefined (because arrays don’t have an id property).
-      const isPasswordMatch = bcrypt.compareSync(password , data[0].password)
-      if(isPasswordMatch){
+      const isPasswordMatch = bcrypt.compareSync(password, data[0].password)
+      if (isPasswordMatch) {
         //token generate garney jwt.sign(k lai lukauney,secret key, expiry date)
-        const token = jwt.sign({id :data[0].id}, "thisissecretkey" , {expiresIn : "30d"}) //HS256 algorithm is used here
+        const token = jwt.sign({ id: data[0].id }, "thisissecretkey", { expiresIn: "30d" }) //HS256 algorithm is used here
         res.status(200).json({
           token,
-          message : "logged in "
+          message: "logged in "
         })
       }
       else {
         res.status(403).json({
-          error : "Invalid email or password "
+          error: "Invalid email or password "
         })
       }
     }
