@@ -130,7 +130,6 @@ const createStudentTable = async (req: IExtendedRequest, res: Response, next: Ne
 }
 
 const createCourseTable = async (req: IExtendedRequest, res: Response, next: NextFunction) => {
-  try {
     const instituteNumber = req.instituteNumber
     await sequelize.query(`
       CREATE TABLE IF NOT EXISTS course_${instituteNumber}(
@@ -138,18 +137,15 @@ const createCourseTable = async (req: IExtendedRequest, res: Response, next: Nex
       courseName VARCHAR(255) NOT NULL,
       coursePrice VARCHAR(255) NOT NULL UNIQUE,
       courseDuration VARCHAR(100) NOT NULL,
-      courseLevel ENUM('beginner','intermediate','advance') NOT NULL
+      courseThumbnail VARCHAR(255),
+      courseLevel ENUM('beginner','intermediate','advance') NOT NULL,
+      createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+      updatedAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP  
     )`)
     res.status(200).json({
       message: "Institute Created",
       instituteNumber
     })
-  } catch (error) {
-    console.log("Error:", error)
-    res.status(500).json({
-      message: error
-    })
-  }
 }
 
 export {

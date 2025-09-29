@@ -6,11 +6,12 @@ import { createCourseTable, createInstitute, createStudentTable, createTeacherTa
 import asyncErrorHandler from "../../services/async.Error.Handler"
 
 //if we dont wrap the controller function then it will go in crash mode and in this mode, if there are 100users using this project then all the 100 users will be unable to run the project 
+// imp note: sometimes wrapper function dont work in middleware
 router.route("/create-institute").post(
-  asyncErrorHandler(Middleware.isLoggedIn),
-  asyncErrorHandler(createInstitute),
-  asyncErrorHandler(createTeacherTable),
-  asyncErrorHandler(createStudentTable),
+  Middleware.isLoggedIn,
+  createInstitute,
+  createTeacherTable,
+  createStudentTable,
   asyncErrorHandler(createCourseTable))
 
 export default router

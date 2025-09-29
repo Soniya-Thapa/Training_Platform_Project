@@ -63,7 +63,9 @@ class Middleware {
         // }
 
         //alternate:
-        const userData = await User.findByPk(result.id) //object return garxa
+        const userData = await User.findByPk(result.id,{
+          attributes:["id", "currentInstituteNumber"]
+        }) //object return garxa
         if (!userData) {
           res.status(404).json({
             message: "No user found with that id"
