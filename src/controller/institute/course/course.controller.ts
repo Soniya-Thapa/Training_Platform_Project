@@ -7,7 +7,7 @@ const createCourse = async (req:IExtendedRequest, res:Response)=>{
   const {courseName, coursePrice, courseDuration, courseLevel} = req.body 
   if(!courseName || !coursePrice || !courseDuration || !courseLevel){
     res.status(400).json({
-      message : "Please provide courseName, coursePrice, courseDuration, courseLevel"
+      message : "Please provide courseName, coursePrice, courseDuration and courseLevel."
     })
     return
   }
