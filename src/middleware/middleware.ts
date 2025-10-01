@@ -30,7 +30,8 @@ import IExtendedRequest from "../globals/indes";
 
 class Middleware {
   static isLoggedIn(req: IExtendedRequest, res: Response, next: NextFunction) {
-    //check if log in or not so we need token 
+    try {
+      //check if log in or not so we need token 
     //header ma authorization name ko key banako xa 
     const token = req.headers.authorization
     // console.log(token)
@@ -78,6 +79,12 @@ class Middleware {
 
       }
     })
+    } catch (error) {
+      console.log("Error:",error)
+      res.status(500).json({
+      message: error
+    })
+    }
   }
 }
 

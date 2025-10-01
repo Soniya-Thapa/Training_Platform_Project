@@ -11,7 +11,8 @@ import User from "../../database/models/user.model";
 // }
 
 const createInstitute = async (req: IExtendedRequest, res: Response, next: NextFunction) => {
-  // console.log(req.user, "name from middleware")
+  try {
+    // console.log(req.user, "name from middleware")
   const { instituteName, instituteEmail, institutePhoneNumber, instituteAddress } = req.body
   const instituteVatNo = req.body.instituteVatNo || null
   const institutePanNo = req.body.institutePanNo || null
@@ -80,6 +81,13 @@ const createInstitute = async (req: IExtendedRequest, res: Response, next: NextF
   //   )`)
   req.instituteNumber = instituteNumber
   next()
+  } catch (error) {
+    console.log("Error : ",error)
+    res.status(500).json({
+      message : error
+    })
+  }
+  
 }
 
 const createTeacherTable = async (req: IExtendedRequest, res: Response, next: NextFunction) => {
