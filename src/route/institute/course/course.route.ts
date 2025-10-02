@@ -54,7 +54,7 @@ router.route("/")
     asyncErrorHandler(getAllCourses))
 
 router.route("/:id")
-  .get(asyncErrorHandler(deleteCourse))
+  .delete(asyncErrorHandler(deleteCourse))
   .get(
     Middleware.isLoggedIn,
     asyncErrorHandler(getSingleCourse))

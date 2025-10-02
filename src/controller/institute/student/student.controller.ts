@@ -12,7 +12,7 @@ const createStudent = async (req:IExtendedRequest, res:Response)=>{
     return
   }
   const studentImage = null
-  const returnedData = await sequelize.query(`INSERT INTO course_${instituteNumber}(studentName, studentPhoneNo, studentAddress, enrolledDate,studentImage) VALUES(?,?,?,?,?)`,{
+  const returnedData = await sequelize.query(`INSERT INTO student_${instituteNumber}(studentName, studentPhoneNo, studentAddress, enrolledDate,studentImage) VALUES(?,?,?,?,?)`,{
     replacements:[studentName, studentPhoneNo, studentAddress, enrolledDate,studentImage || "http://soniyathapa.com/image/hello.png"]
   })
   console.log("returned data : ", returnedData)
@@ -24,14 +24,14 @@ const createStudent = async (req:IExtendedRequest, res:Response)=>{
 const deleteStudent = async (req: IExtendedRequest, res:Response)=>{
   const instituteNumber = req.user?.currentInstituteNumber
   const studentId = req.params.id
-  const [studentData] = await sequelize.query(`SELECT *FROM course_${instituteNumber} where id=${studentId}`) 
+  const [studentData] = await sequelize.query(`SELECT *FROM student_${instituteNumber} where id=${studentId}`) 
   if(studentData.length == 0){
     return res.status(404).json({
       message : "No student found with that id."
     })
     return
   }
-  await sequelize.query(`DELETE FROM course_${instituteNumber} WHERE id = ${studentId}`)
+  await sequelize.query(`DELETE FROM student_${instituteNumber} WHERE id = ${studentId}`)
   res.status(200).json({
     message :"Student deleted successfully."
   })
@@ -39,7 +39,7 @@ const deleteStudent = async (req: IExtendedRequest, res:Response)=>{
 
 const getAllStudents = async (req:IExtendedRequest,res:Response) =>{
   const instituteNumber = req.user?.currentInstituteNumber
-  const [allStudentData] = await sequelize.query(`SELECT * FROM course_${instituteNumber}`)
+  const [allStudentData] = await sequelize.query(`SELECT * FROM student_${instituteNumber}`)
   if(allStudentData.length == 0){
     return res.status(404).json({
       message : "There are no students."
@@ -55,7 +55,7 @@ const getAllStudents = async (req:IExtendedRequest,res:Response) =>{
 const getSingleStudent = async (req:IExtendedRequest,res:Response) =>{
   const instituteNumber = req.user?.currentInstituteNumber
   const studentId = req.params.id
-  const [studentData] = await sequelize.query(`SELECT *FROM course_${instituteNumber} WHERE id= ${studentId}`)
+  const [studentData] = await sequelize.query(`SELECT *FROM student_${instituteNumber} WHERE id= ${studentId}`)
   if(studentData.length == 0){
     return res.status(404).json({
       message :  "No student found with that id."

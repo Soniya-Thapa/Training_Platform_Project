@@ -12,7 +12,7 @@ router.route("/")
 .get(asyncErrorHandler(getAllStudents))
 
 router.route("/:id")
-.get(asyncErrorHandler(deleteStudent))
+.delete(asyncErrorHandler(deleteStudent))
 .get(
   Middleware.isLoggedIn,
   asyncErrorHandler(getSingleStudent))

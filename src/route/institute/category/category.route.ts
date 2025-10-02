@@ -14,7 +14,7 @@ router.route("/")
   asyncErrorHandler(getAllCategories))
 
 router.route("/:id")
-.get(
+.delete(
   Middleware.isLoggedIn,
   asyncErrorHandler(deleteCategory))
 .get(
