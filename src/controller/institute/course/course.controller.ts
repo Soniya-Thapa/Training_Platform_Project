@@ -2,26 +2,36 @@ import { Request, Response } from "express";
 import sequelize from "../../../database/connection";
 import IExtendedRequest from "../../../globals/indes";
 
-const createCourse = async (req:IExtendedRequest, res:Response)=>{
+const createCourse = async (req: IExtendedRequest, res: Response) => {
   const instituteNumber = req.user?.currentInstituteNumber
-  const {courseName, coursePrice, courseDuration, courseLevel} = req.body 
-  if(!courseName || !coursePrice || !courseDuration || !courseLevel){
+  const { courseName, coursePrice, courseDuration, courseLevel, courseDescription } = req.body
+  if (!courseName || !coursePrice || !courseDuration || !courseLevel || !courseDescription) {
     res.status(400).json({
-      message : "Please provide courseName, coursePrice, courseDuration and courseLevel."
+      message: "Please provide courseName, coursePrice, courseDuration, courseLevel and courseDescription."
     })
     return
   }
-  const courseThumbnail = null
-  const returnedData = await sequelize.query(`INSERT INTO course_${instituteNumber}(courseName, coursePrice, courseDuration, courseThumbnail, courseLevel) VALUES(?,?,?,?,?)`,{
-    replacements:[courseName, coursePrice, courseDuration, courseThumbnail || "http://soniyathapa.com/image/hello.png", courseLevel]
+  // console.log("req.file content : ", req.file)
+  //   req.file content :  {
+  //   fieldname: 'courseThumbnail',
+  //   originalname: 'background_img.png',
+  //   encoding: '7bit',
+  //   mimetype: 'image/png',
+  //   path: 'https://res.cloudinary.com/dg5egidyh/image/upload/v1759375873/wfxuur20vksmdz2dqnmr.png',
+  //   size: 373411,
+  //   filename: 'wfxuur20vksmdz2dqnmr'
+  // }
+  const courseThumbnail = req.file ? req.file.path : null
+  const returnedData = await sequelize.query(`INSERT INTO course_${instituteNumber}(courseName, coursePrice, courseDuration, courseThumbnail, courseLevel, courseDescription) VALUES(?,?,?,?,?,?)`, {
+    replacements: [courseName, coursePrice, courseDuration, courseThumbnail, courseLevel, courseDescription]
   })
   console.log("returned data : ", returnedData)
   res.status(200).json({
-    message : "Course created successfully."
+    message: "Course created successfully."
   })
 }
 
-const deleteCourse = async (req: IExtendedRequest, res:Response)=>{
+const deleteCourse = async (req: IExtendedRequest, res: Response) => {
   const instituteNumber = req.user?.currentInstituteNumber
   const courseId = req.params.id
   //check whether the particular course exist or not . 
@@ -32,47 +42,47 @@ const deleteCourse = async (req: IExtendedRequest, res:Response)=>{
   //code here 
   //}
   //its because the data is in array 0th index and in other index there are some other metadata
-  if(courseData.length == 0){
+  if (courseData.length == 0) {
     return res.status(404).json({
-      message : "No course found with that id."
+      message: "No course found with that id."
     })
     return
   }
   await sequelize.query(`DELETE FROM course_${instituteNumber} WHERE id = ${courseId}`)
   res.status(200).json({
-    message :"Course deleted successfully."
+    message: "Course deleted successfully."
   })
 }
 
-const getAllCourses = async (req:IExtendedRequest,res:Response) =>{
+const getAllCourses = async (req: IExtendedRequest, res: Response) => {
   const instituteNumber = req.user?.currentInstituteNumber
   const [allCourseData] = await sequelize.query(`SELECT * FROM course_${instituteNumber}`)
-  if(allCourseData.length == 0){
+  if (allCourseData.length == 0) {
     return res.status(404).json({
-      message : "There are no courses."
+      message: "There are no courses."
     })
     return
   }
   res.status(200).json({
-    message : "All courses retrieved.",
+    message: "All courses retrieved.",
     courses: allCourseData || []
-  }) 
+  })
 }
 
-const getSingleCourse = async (req:IExtendedRequest,res:Response) =>{
+const getSingleCourse = async (req: IExtendedRequest, res: Response) => {
   const instituteNumber = req.user?.currentInstituteNumber
   const courseId = req.params.id
   const [courseData] = await sequelize.query(`SELECT *FROM course_${instituteNumber} WHERE id= ${courseId}`)
-  if(courseData.length == 0){
+  if (courseData.length == 0) {
     return res.status(404).json({
-      message :  "No course found with that id."
+      message: "No course found with that id."
     })
     return
   }
   res.status(200).json({
-    message : "Single course fetched.",
+    message: "Single course fetched.",
     courses: courseData || []
-  }) 
+  })
 }
 
 export {

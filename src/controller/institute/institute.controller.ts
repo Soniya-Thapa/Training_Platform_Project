@@ -142,11 +142,12 @@ const createCourseTable = async (req: IExtendedRequest, res: Response, next: Nex
     await sequelize.query(`
       CREATE TABLE IF NOT EXISTS course_${instituteNumber}(
       id INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
-      courseName VARCHAR(255) NOT NULL,
-      coursePrice VARCHAR(255) NOT NULL UNIQUE,
+      courseName VARCHAR(255) NOT NULL UNIQUE,
+      coursePrice VARCHAR(255) NOT NULL,
       courseDuration VARCHAR(100) NOT NULL,
       courseThumbnail VARCHAR(255),
       courseLevel ENUM('beginner','intermediate','advance') NOT NULL,
+      courseDescription TEXT,
       createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
       updatedAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP  
     )`)
