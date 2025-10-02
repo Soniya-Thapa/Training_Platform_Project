@@ -34,6 +34,9 @@ const upload = multer({
       //cb(error): 1 argument
       cb(new Error("The file you provided is in unsupported format."))
     }
+  },
+  limits:{
+    fileSize: 4*1024*1024 //4mb
   }
 })
 
@@ -46,7 +49,9 @@ router.route("/")
     // if the files are multiple then use array :upload.array("") 
     upload.single('courseThumbnail'),
     asyncErrorHandler(createCourse))
-  .get(asyncErrorHandler(getAllCourses))
+  .get(
+    Middleware.isLoggedIn,
+    asyncErrorHandler(getAllCourses))
 
 router.route("/:id")
   .get(asyncErrorHandler(deleteCourse))
