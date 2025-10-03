@@ -4,10 +4,10 @@ import IExtendedRequest from "../../../globals/indes";
 
 const createCourse = async (req: IExtendedRequest, res: Response) => {
   const instituteNumber = req.user?.currentInstituteNumber
-  const { courseName, coursePrice, courseDuration, courseLevel, courseDescription } = req.body
-  if (!courseName || !coursePrice || !courseDuration || !courseLevel || !courseDescription) {
+  const { courseName, coursePrice, courseDuration, courseLevel, courseDescription ,categoryId} = req.body
+  if (!courseName || !coursePrice || !courseDuration || !courseLevel || !courseDescription ||!categoryId) {
     res.status(400).json({
-      message: "Please provide courseName, coursePrice, courseDuration, courseLevel and courseDescription."
+      message: "Please provide courseName, coursePrice, courseDuration, courseLevel, categoryId and courseDescription."
     })
     return
   }
@@ -22,8 +22,8 @@ const createCourse = async (req: IExtendedRequest, res: Response) => {
   //   filename: 'wfxuur20vksmdz2dqnmr'
   // }
   const courseThumbnail = req.file ? req.file.path : null
-  const returnedData = await sequelize.query(`INSERT INTO course_${instituteNumber}(courseName, coursePrice, courseDuration, courseThumbnail, courseLevel, courseDescription) VALUES(?,?,?,?,?,?)`, {
-    replacements: [courseName, coursePrice, courseDuration, courseThumbnail, courseLevel, courseDescription]
+  const returnedData = await sequelize.query(`INSERT INTO course_${instituteNumber}(courseName, coursePrice, courseDuration, courseThumbnail, courseLevel, courseDescription, categoryId) VALUES(?,?,?,?,?,?,?)`, {
+    replacements: [courseName, coursePrice, courseDuration, courseThumbnail, courseLevel, courseDescription, categoryId]
   })
   console.log("returned data : ", returnedData)
   res.status(200).json({
@@ -56,7 +56,7 @@ const deleteCourse = async (req: IExtendedRequest, res: Response) => {
 
 const getAllCourses = async (req: IExtendedRequest, res: Response) => {
   const instituteNumber = req.user?.currentInstituteNumber
-  const [allCourseData] = await sequelize.query(`SELECT * FROM course_${instituteNumber}`)
+  const [allCourseData] = await sequelize.query(`SELECT * FROM course_${instituteNumber} JOIN category_${instituteNumber} ON course_${instituteNumber}.categoryId = category_${instituteNumber}.id`)
   if (allCourseData.length == 0) {
     return res.status(404).json({
       message: "There are no courses."
