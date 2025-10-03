@@ -15,13 +15,18 @@ const createTeacher = async (req:IExtendedRequest, res:Response)=>{
     return
   }
   const password = generateRandomPassword(teacherName)
-  const returnedData = await sequelize.query(`INSERT INTO teacher_${instituteNumber}(teacherName, teacherEmail, teacherPhoneNumber, teacherExpertise, teacherJoinedDate, teacherSalary, teacherPhoto, teacherPassword) VALUES(?,?,?,?,?,?,?)`,{
+  const returnedData = await sequelize.query(`INSERT INTO teacher_${instituteNumber}(teacherName, teacherEmail, teacherPhoneNumber, teacherExpertise, teacherJoinedDate, teacherSalary, teacherPhoto, teacherPassword) VALUES(?,?,?,?,?,?,?,?)`,{
     type: QueryTypes.INSERT,
     replacements:[teacherName, teacherEmail, teacherPhoneNumber, teacherExpertise, teacherJoinedDate, teacherSalary, teacherPhoto, password.hashedVersion]
   })
-  await sequelize.query(`UPDATE course_${instituteNumber} SET teacherId=? WHERE courseId=?`,{
+  const teacherData : {id :string}[]= await sequelize.query(`SELECT id FROM teacher_${instituteNumber} WHERE teacherEmail=?`,{
+    type: QueryTypes.SELECT,
+    replacements:[teacherEmail]
+  })
+  console.log("TeacherData: ",teacherData)
+  await sequelize.query(`UPDATE course_${instituteNumber} SET teacherId=? WHERE id=?`,{
     type: QueryTypes.UPDATE,
-    replacements:[1 , courseId]
+    replacements:[teacherData[0].id , courseId]
   })
   console.log("returned data : ", returnedData)
   res.status(200).json({
