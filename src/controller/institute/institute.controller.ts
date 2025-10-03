@@ -100,8 +100,10 @@ const createTeacherTable = async (req: IExtendedRequest, res: Response, next: Ne
       teacherEmail VARCHAR(255),
       teacherPhoneNumber VARCHAR(255),
       teacherExpertise VARCHAR(255),
-      joinedDate DATE,
-      salary VARCHAR(255),
+      teacherJoinedDate DATE,
+      teacherSalary VARCHAR(255),
+      teacherPhoto VARCHAR(255),
+      teacherPassword VARCHAR(255),
       createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
       updatedAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP   
     )`)
@@ -142,6 +144,7 @@ const createCourseTable = async (req: IExtendedRequest, res: Response, next: Nex
   await sequelize.query(`
       CREATE TABLE IF NOT EXISTS course_${instituteNumber}(
       id VARCHAR(36) PRIMARY KEY DEFAULT (UUID()),
+      teacherId VARCHAR(36) REFERENCES teacher_${instituteNumber} (id),
       categoryId VARCHAR(36) NOT NULL REFERENCES category_${instituteNumber} (id),
       courseName VARCHAR(255) NOT NULL UNIQUE,
       coursePrice VARCHAR(255) NOT NULL,

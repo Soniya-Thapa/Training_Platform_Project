@@ -1,18 +1,27 @@
 import { Request, Response } from "express";
 import sequelize from "../../../database/connection";
 import IExtendedRequest from "../../../globals/indes";
+import generateRandomPassword from "../../../services/generate.random.password";
+import { QueryTypes } from "sequelize";
 
 const createTeacher = async (req:IExtendedRequest, res:Response)=>{
   const instituteNumber = req.user?.currentInstituteNumber
-  const {teacherName, teacherEmail, teacherPhoneNumber, teacherExpertise, joinedDate, salary} = req.body 
-  if(!teacherName || !teacherEmail || !teacherPhoneNumber || !teacherExpertise || !joinedDate || !salary){
+  const {teacherName, teacherEmail, teacherPhoneNumber, teacherExpertise, teacherJoinedDate, teacherSalary, courseId} = req.body 
+  const teacherPhoto = req.file ? req.file.path : "https://www.shutterstock.com/image-vector/default-avatar-profile-icon-social-600nw-1677509740.jpg"
+  if(!teacherName || !teacherEmail || !teacherPhoneNumber || !teacherExpertise || !teacherJoinedDate || !teacherSalary){
     res.status(400).json({
-      message : "Please provide teacherName, teacherEmail, teacherPhoneNumber, teacherExpertise, joinedDate and salary."
+      message : "Please provide teacherName, teacherEmail, teacherPhoneNumber, teacherExpertise, teacherJoinedDate and teacherSalary."
     })
     return
   }
-  const returnedData = await sequelize.query(`INSERT INTO course_${instituteNumber}(teacherName, teacherEmail, teacherPhoneNumber, teacherExpertise, joinedDate, salary) VALUES(?,?,?,?,?)`,{
-    replacements:[teacherName, teacherEmail, teacherPhoneNumber, teacherExpertise, joinedDate, salary]
+  const password = generateRandomPassword(teacherName)
+  const returnedData = await sequelize.query(`INSERT INTO teacher_${instituteNumber}(teacherName, teacherEmail, teacherPhoneNumber, teacherExpertise, teacherJoinedDate, teacherSalary, teacherPhoto, teacherPassword) VALUES(?,?,?,?,?,?,?)`,{
+    type: QueryTypes.INSERT,
+    replacements:[teacherName, teacherEmail, teacherPhoneNumber, teacherExpertise, teacherJoinedDate, teacherSalary, teacherPhoto, password.hashedVersion]
+  })
+  await sequelize.query(`UPDATE course_${instituteNumber} SET teacherId=? WHERE courseId=?`,{
+    type: QueryTypes.UPDATE,
+    replacements:[1 , courseId]
   })
   console.log("returned data : ", returnedData)
   res.status(200).json({
