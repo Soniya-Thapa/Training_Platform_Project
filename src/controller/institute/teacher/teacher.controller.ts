@@ -28,7 +28,7 @@ const createTeacher = async (req:IExtendedRequest, res:Response)=>{
     type: QueryTypes.UPDATE,
     replacements:[teacherData[0].id , courseId]
   })
-  console.log("returned data : ", returnedData)
+  // console.log("returned data : ", returnedData)
   res.status(200).json({
     message : "Teacher created successfully."
   })
