@@ -3,6 +3,7 @@ import sequelize from "../../../database/connection";
 import IExtendedRequest from "../../../globals/indes";
 import generateRandomPassword from "../../../services/generate.random.password";
 import { QueryTypes } from "sequelize";
+import sendMail from "../../../services/send.mail";
 
 const createTeacher = async (req:IExtendedRequest, res:Response)=>{
   const instituteNumber = req.user?.currentInstituteNumber
@@ -29,6 +30,13 @@ const createTeacher = async (req:IExtendedRequest, res:Response)=>{
     replacements:[teacherData[0].id , courseId]
   })
   // console.log("returned data : ", returnedData)
+  //for sending mail
+  const mailInformation = {
+    to : teacherEmail,
+    subject : "Welcome to our SaaS MERN Project.",
+    text : `Welcome. Email : ${teacherEmail}, Password : ${password.plainVersion}`
+  }
+  await sendMail(mailInformation)
   res.status(200).json({
     message : "Teacher created successfully."
   })
