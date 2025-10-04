@@ -22,8 +22,7 @@ const sendMail = async (mailInformation:IMailInformation)=>{
     from :"SaaS MERN <ayinos.apaht143@gmail.com>",
     to: mailInformation.to,
     subject:mailInformation.subject,
-    //body
-    text: mailInformation.text
+    html: mailInformation.text //body
   }
   try {
     await transporter.sendMail (mailFormatObject)

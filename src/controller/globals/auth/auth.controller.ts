@@ -1,7 +1,7 @@
 import { Request, Response } from "express"
 import User from "../../../database/models/user.model"
 import bcrypt from "bcrypt"
-import jwt from "jsonwebtoken"
+import generateJwtToken from "../../../services/generate.jwt.token"
 
 // const registerUser = async (req : Request,res : Response)=>{
 
@@ -99,8 +99,7 @@ class AuthController {
       // If you try data.id or data.password, it will be undefined (because arrays don’t have an id property).
       const isPasswordMatch = bcrypt.compareSync(password, data[0].password)
       if (isPasswordMatch) {
-        //token generate garney jwt.sign(k lai lukauney,secret key, expiry date)
-        const token = jwt.sign({ id: data[0].id }, "thisissecretkey", { expiresIn: "30d" }) //HS256 algorithm is used here
+        const token = generateJwtToken({ id: data[0].id}) //HS256 algorithm is used here
         res.status(200).json({
           token,
           message: "logged in "

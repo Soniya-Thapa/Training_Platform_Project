@@ -16,7 +16,7 @@ const createTeacher = async (req:IExtendedRequest, res:Response)=>{
     return
   }
   const password = generateRandomPassword(teacherName)
-  const returnedData = await sequelize.query(`INSERT INTO teacher_${instituteNumber}(teacherName, teacherEmail, teacherPhoneNumber, teacherExpertise, teacherJoinedDate, teacherSalary, teacherPhoto, teacherPassword) VALUES(?,?,?,?,?,?,?,?)`,{
+  await sequelize.query(`INSERT INTO teacher_${instituteNumber}(teacherName, teacherEmail, teacherPhoneNumber, teacherExpertise, teacherJoinedDate, teacherSalary, teacherPhoto, teacherPassword) VALUES(?,?,?,?,?,?,?,?)`,{
     type: QueryTypes.INSERT,
     replacements:[teacherName, teacherEmail, teacherPhoneNumber, teacherExpertise, teacherJoinedDate, teacherSalary, teacherPhoto, password.hashedVersion]
   })
@@ -34,7 +34,7 @@ const createTeacher = async (req:IExtendedRequest, res:Response)=>{
   const mailInformation = {
     to : teacherEmail,
     subject : "Welcome to our SaaS MERN Project.",
-    text : `Welcome. Email : ${teacherEmail}, Password : ${password.plainVersion}`
+    text : `Welcome. Email : ${teacherEmail}, Password : ${password.plainVersion}, InstituteNumber: ${instituteNumber}`
   }
   await sendMail(mailInformation)
   res.status(200).json({
